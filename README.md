@@ -29,41 +29,53 @@ PROGRAM:
 
 CLIENT:
 
+```
 import socket
 
-s=socket.socket()
+s = socket.socket()
+s.connect(('localhost', 8000))
+print("Connected to server.")
 
-s.connect(('localhost',8000))
+while True:
+    client_msg = input("Client > ")
+    s.send(client_msg.encode())
+
+    server_msg = s.recv(1024).decode()
+    if not server_msg:
+        break
+    print("Server >", server_msg)
+
+s.close()
+
+```
 
 SERVER:
 
+```
 import socket
 
-s=socket.socket()
-
-s.bind(('localhost',8000))
-
+s = socket.socket()
+s.bind(('localhost', 8000))
 s.listen(5)
 
-c,addr=s.accept()
+print("Server is listening...")
+c, addr = s.accept()
+print("Connected with:", addr)
 
 while True:
+    # Receive from client
+    client_msg = c.recv(1024).decode()
+    if not client_msg:
+        break
+    print("Client >", client_msg)
 
-ClientMessage=c.recv(1024).decode()
+    # Send to client
+    server_msg = input("Server > ")
+    c.send(server_msg.encode())
 
-print("Client > ",ClientMessage)
+c.close()
 
-msg=input("Server > ")
-
-c.send(msg.encode())
-
-while True:
-
-msg=input("Client > ")
-
-s.send(msg.encode())
-
-print("Server > ",s.recv(1024).decode())
+```
 
 OUTPUT:
 
@@ -75,6 +87,5 @@ SERVER:
 
 RESULT:
 
-Thus, the python program for creating Chat using TCP Sockets Links was successfully
-created and executed.
+Thus, the python program for creating Chat using TCP Sockets Links was successfully created and executed.
 
